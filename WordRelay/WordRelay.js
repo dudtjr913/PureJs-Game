@@ -56,7 +56,7 @@ const handleOnUserInput = (life) => (e) => {
 
 const gameStart = () => {
   makeScreen();
-  let life = 5;
+  const life = 5;
   const form = document.querySelector("form");
   form.addEventListener("submit", handleOnUserInput(life));
 };
