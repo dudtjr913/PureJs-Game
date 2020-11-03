@@ -32,6 +32,9 @@ const handleOnUserInput = (e) => {
   e.preventDefault();
   const userInput = document.querySelector("input");
   const word = document.querySelector(".word");
+  if (userInput.value !== userInput.value.trim())
+    return alert("공백은 존재할 수 없습니다.");
+  if (userInput.value.match(/[^가-힣]/g)) return alert("단어가 아닙니다.");
   word.innerText[word.innerText.length - 1] === userInput.value[0]
     ? rightAnswer()
     : wrongAnswer();
