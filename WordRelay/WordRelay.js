@@ -73,10 +73,19 @@ const handleOnUserInput = (life) => (e) => {
 };
 
 const gameStart = () => {
+  document.body.firstElementChild &&
+    document.body.removeChild(document.body.firstElementChild);
   makeScreen();
   const life = 5;
   const form = document.querySelector("form");
   form.addEventListener("submit", handleOnUserInput(life));
 };
 
-gameStart();
+const gameStartButton = () => {
+  const button = document.createElement("button");
+  button.innerText = "끝말잇기 시작";
+  document.body.append(button);
+  button.addEventListener("click", gameStart);
+};
+
+gameStartButton();
