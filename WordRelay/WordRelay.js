@@ -1,4 +1,6 @@
 const makeScreen = () => {
+  document.body.firstElementChild &&
+    document.body.removeChild(document.body.firstElementChild);
   const title = document.createElement("div");
   const wordTitle = document.createElement("span");
   const firstWord = document.createElement("span");
@@ -73,8 +75,6 @@ const handleOnUserInput = (life) => (e) => {
 };
 
 const gameStart = () => {
-  document.body.firstElementChild &&
-    document.body.removeChild(document.body.firstElementChild);
   makeScreen();
   const life = 5;
   const form = document.querySelector("form");
