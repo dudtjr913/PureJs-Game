@@ -27,8 +27,8 @@ const makeScreen = () => {
 };
 
 const cleanScreen = () => {
-  while (document.body.hasChildNodes()) {
-    document.body.removeChild(document.body.firstChild);
+  while (document.body.firstElementChild) {
+    document.body.removeChild(document.body.firstElementChild);
   }
   return gameStart();
 };
