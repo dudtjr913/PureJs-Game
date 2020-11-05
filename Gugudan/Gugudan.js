@@ -27,6 +27,14 @@
     gugudanWrapper.append(answer);
   };
 
+  const cleanScreen = () => {
+    const gugudanWrapper = document.querySelector(".gugudan");
+    const buttonWrapper = document.querySelector(".gugudan-btn");
+    document.body.removeChild(gugudanWrapper);
+    document.body.removeChild(buttonWrapper);
+    gameStartButton();
+  };
+
   const reStart = (gugudanWrapper) => () => {
     document.body.removeChild(gugudanWrapper);
     return gameStart();
@@ -74,6 +82,9 @@
   };
 
   const gameStart = () => {
+    const button = document.querySelector(".gugudan-btn");
+    document.body.removeChild(button);
+    gameFinishButton();
     makeScreen();
     const life = 5;
     const gugudanWrapper = document.querySelector(".gugudan");
@@ -84,8 +95,17 @@
   const gameStartButton = () => {
     const button = document.createElement("button");
     button.innerText = "구구단 시작";
+    button.classList.add("gugudan-btn");
     document.body.append(button);
     button.addEventListener("click", gameStart);
+  };
+
+  const gameFinishButton = () => {
+    const button = document.createElement("button");
+    button.innerText = "구구단 종료";
+    button.classList.add("gugudan-btn");
+    document.body.append(button);
+    button.addEventListener("click", cleanScreen);
   };
 
   gameStartButton();
