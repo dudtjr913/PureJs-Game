@@ -27,26 +27,24 @@
     gugudanWrapper.append(answer);
   };
 
-  const cleanScreen = () => {
+  const gameFinish = () => {
     const gugudanWrapper = document.querySelector(".gugudan");
-    const buttonWrapper = document.querySelector(".gugudan-btn");
+    const replayButton = gugudanWrapper.querySelector("button");
+    if (replayButton) {
+      document.body.removeChild(gugudanWrapper);
+      return gameStart();
+    }
     document.body.removeChild(gugudanWrapper);
-    document.body.removeChild(buttonWrapper);
-    gameStartButton();
+    return gameStartButton();
   };
 
-  const reStart = (gugudanWrapper) => () => {
-    document.body.removeChild(gugudanWrapper);
-    return gameStart();
-  };
-
-  const gameFinish = (gugudanWrapper) => {
+  const reStart = (gugudanWrapper) => {
     const form = gugudanWrapper.querySelector("form");
     const reStartButton = document.createElement("button");
     reStartButton.innerText = "다시하기";
     gugudanWrapper.removeChild(form);
     gugudanWrapper.append(reStartButton);
-    reStartButton.addEventListener("click", reStart(gugudanWrapper));
+    reStartButton.addEventListener("click", gameFinish());
   };
 
   const rightAnswer = (gugudanWrapper) => {
@@ -61,7 +59,7 @@
     life.innerText = `목숨 : ${lifeNumber}`;
     const answer = gugudanWrapper.querySelector(".answer");
     answer.innerText = "오답입니다 목숨이 1 감소합니다.";
-    if (lifeNumber === 0) return gameFinish(gugudanWrapper);
+    if (lifeNumber === 0) return reStart(gugudanWrapper);
   };
 
   const convertAnswer = (gugudanWrapper) => {
@@ -82,8 +80,6 @@
   };
 
   const gameStart = () => {
-    const button = document.querySelector(".gugudan-btn");
-    document.body.removeChild(button);
     gameFinishButton();
     makeScreen();
     const life = 5;
@@ -93,19 +89,22 @@
   };
 
   const gameStartButton = () => {
-    const button = document.createElement("button");
+    let button = document.querySelector(".gugudan-btn");
+    if (!button) {
+      button = document.createElement("button");
+      button.classList.add("gugudan-btn");
+      document.body.append(button);
+    }
     button.innerText = "구구단 시작";
-    button.classList.add("gugudan-btn");
-    document.body.append(button);
+    button.removeEventListener("click", gameFinish);
     button.addEventListener("click", gameStart);
   };
 
   const gameFinishButton = () => {
-    const button = document.createElement("button");
+    const button = document.querySelector(".gugudan-btn");
     button.innerText = "구구단 종료";
-    button.classList.add("gugudan-btn");
-    document.body.append(button);
-    button.addEventListener("click", cleanScreen);
+    button.removeEventListener("click", gameStart);
+    button.addEventListener("click", gameFinish);
   };
 
   gameStartButton();
