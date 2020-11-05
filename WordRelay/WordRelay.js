@@ -29,10 +29,16 @@
     wordRelayWrapper.append(answer);
   };
 
-  const cleanScreen = () => {
+  const finishGame = () => {
     const wordRelayWrapper = document.querySelector(".wordRelay");
-    document.body.removeChild(wordRelayWrapper);
-    return gameStart();
+    const replayButton = wordRelayWrapper.querySelector("button");
+    if (replayButton) {
+      // 다시하기를 눌렀을 때
+      document.body.removeChild(wordRelayWrapper);
+      return gameStart();
+    }
+    document.body.removeChild(wordRelayWrapper); // 게임종료를 눌렀을 때
+    return gameStartButton();
   };
 
   const rightAnswer = (userInput) => {
@@ -47,7 +53,7 @@
     button.type = "submit";
     button.innerText = "다시하기";
     wordRelayWrapper.append(button);
-    button.onclick = cleanScreen;
+    button.onclick = finishGame;
   };
 
   const wrongAnswer = (lifeNumber, wordRelayWrapper) => {
@@ -77,6 +83,7 @@
   };
 
   const gameStart = () => {
+    gameFinishButton();
     makeScreen();
     const wordRelayWrapper = document.querySelector(".wordRelay");
     const life = 5;
@@ -85,10 +92,22 @@
   };
 
   const gameStartButton = () => {
-    const button = document.createElement("button");
+    let button = document.querySelector(".wordRelay-btn");
+    if (!button) {
+      button = document.createElement("button");
+      button.classList.add("wordRelay-btn");
+      document.body.append(button);
+    }
     button.innerText = "끝말잇기 시작";
-    document.body.append(button);
+    button.removeEventListener("click", finishGame);
     button.addEventListener("click", gameStart);
+  };
+
+  const gameFinishButton = () => {
+    const button = document.querySelector(".wordRelay-btn");
+    button.innerText = "끝말잇기 종료";
+    button.removeEventListener("click", gameStart);
+    button.addEventListener("click", finishGame);
   };
 
   gameStartButton();
