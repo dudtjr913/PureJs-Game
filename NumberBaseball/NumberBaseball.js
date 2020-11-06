@@ -20,6 +20,7 @@
     const form = document.createElement("form");
     const input = document.createElement("input");
     const life = document.createElement("div");
+    life.classList.add("life");
 
     numberBaseballWrapper.classList.add("number-baseball");
     title.innerText = "숫자야구";
@@ -37,6 +38,14 @@
     numberBaseballWrapper.append(life);
   };
 
+  const showOnResult = (numberBaseballWrapper, userInput, result, myLife) => {
+    const div = document.createElement("div");
+    const life = document.querySelector(".life");
+    life.innerText = `목숨 : ${myLife}`;
+    div.innerText = `${userInput} : ${result.strike}S ${result.ball}B ${result.out}O`;
+    numberBaseballWrapper.append(div);
+  };
+
   const repCheck = (value) => {
     // 숫자가 겹치는지 확인
     const check = value.split("");
@@ -47,7 +56,7 @@
     return true;
   };
 
-  const handleOnUserInput = (numberBaseballWrapper, numbers) => (e) => {
+  const handleOnUserInput = (numberBaseballWrapper, numbers, life) => (e) => {
     // 유저의 input을 받아 S,B,O 또는 에러에 대한 결과를 다루기
     e.preventDefault();
     const result = {
@@ -58,9 +67,11 @@
     const input = numberBaseballWrapper.querySelector("input");
     const inputValue = input.value.toString(); // input이 숫자이기 때문에 비교를 위해 문자열로 바꾸기
     if (inputValue.length !== 4) {
+      // 4자리의 숫자가 아닐 시 에러
       return alert("4자리의 숫자가 아닙니다.");
     }
     if (!repCheck(inputValue)) {
+      // 중복 시 에러
       return alert("숫자가 중복됩니다.");
     }
     for (let i = 0; i < 4; i++) {
@@ -80,6 +91,8 @@
       // out일 경우
       result.out++;
     }
+    console.log(numbers);
+    return showOnResult(numberBaseballWrapper, input.value, result, --life);
   };
 
   const gameStart = () => {
@@ -87,8 +100,9 @@
     makeScreen();
     const numbers = makeNumbers();
     const numberBaseballWrapper = document.querySelector(".number-baseball");
+    const life = 10; // 목숨 10
     const form = numberBaseballWrapper.querySelector("form");
-    form.addEventListener("submit", handleOnUserInput(numberBaseballWrapper, numbers));
+    form.addEventListener("submit", handleOnUserInput(numberBaseballWrapper, numbers, life));
   };
 
   const gameStartButton = () => {
