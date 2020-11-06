@@ -38,6 +38,12 @@
     numberBaseballWrapper.append(life);
   };
 
+  const clearScreen = () => {
+    const numberBaseballWrapper = document.querySelector(".number-baseball");
+    document.body.removeChild(numberBaseballWrapper);
+    gameStartButton();
+  };
+
   const reStart = () => {
     const numberBaseballWrapper = document.querySelector(".number-baseball");
     document.body.removeChild(numberBaseballWrapper);
@@ -129,6 +135,7 @@
   const gameStart = () => {
     // 게임 시작
     makeScreen();
+    gameFinishButton();
     const numbers = makeNumbers();
     const numberBaseballWrapper = document.querySelector(".number-baseball");
     const life = 10; // 목숨 10
@@ -138,11 +145,23 @@
 
   const gameStartButton = () => {
     // 게임 시작 버튼
-    const button = document.createElement("button");
+    let button = document.querySelector(".number-baseball-btn");
+    if (!button) {
+      button = document.createElement("button");
+      button.classList.add("number-baseball-btn");
+      document.body.append(button);
+    }
     button.innerText = "숫자야구 시작";
-    button.classList.add("number-baseball-btn");
-    document.body.append(button);
+    button.removeEventListener("click", clearScreen);
     button.addEventListener("click", gameStart);
+  };
+
+  const gameFinishButton = () => {
+    // 게임 종료 버튼
+    const button = document.querySelector(".number-baseball-btn");
+    button.innerText = "숫자야구 종료";
+    button.removeEventListener("click", gameStart);
+    button.addEventListener("click", clearScreen);
   };
 
   gameStartButton();
