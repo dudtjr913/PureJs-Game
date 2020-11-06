@@ -38,10 +38,41 @@
     numberBaseballWrapper.append(life);
   };
 
+  const reStart = () => {
+    const numberBaseballWrapper = document.querySelector(".number-baseball");
+    document.body.removeChild(numberBaseballWrapper);
+    gameStart();
+  };
+
+  const gameFinish = (numberBaseballWrapper) => {
+    const form = numberBaseballWrapper.querySelector("form");
+    const resultDiv = numberBaseballWrapper.querySelectorAll(".result");
+    const reStartBtn = document.createElement("button");
+    reStartBtn.innerText = "다시하기";
+    numberBaseballWrapper.removeChild(form);
+    for (const i of resultDiv) {
+      // 결과를 나타내는 노드들을 돌아가면서 하나씩 지움
+      numberBaseballWrapper.removeChild(i);
+    }
+    numberBaseballWrapper.append(reStartBtn); // 다시하기 버튼 추가
+    reStartBtn.addEventListener("click", reStart);
+  };
+
   const showOnResult = (numberBaseballWrapper, userInput, result, myLife) => {
     const div = document.createElement("div");
     const life = document.querySelector(".life");
-    life.innerText = `목숨 : ${myLife}`;
+    if (!myLife && result.strike !== 4) {
+      // 목숨이 0이고 4S가 아닐 때 패배
+      life.innerText = "패배하셨습니다.";
+      return gameFinish(numberBaseballWrapper);
+    }
+    if (result.strike === 4) {
+      // 4S일 때 승리
+      life.innerText = `${userInput} : 4S로 승리하셨습니다.`;
+      return gameFinish(numberBaseballWrapper);
+    }
+    life.innerText = myLife > 1 ? `목숨 : ${myLife}` : "마지막 기회입니다.";
+    div.classList.add("result");
     div.innerText = `${userInput} : ${result.strike}S ${result.ball}B ${result.out}O`;
     numberBaseballWrapper.append(div);
   };
