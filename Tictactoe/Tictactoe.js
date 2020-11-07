@@ -41,7 +41,7 @@
     const ticWrapper = document.querySelector(".tictactoe");
     const button = document.createElement("button");
     button.innerText = "다시하기";
-    button.style.transform = "translate(90px, 30px)";
+    button.style.transform = "translate(90px, 10px)";
     ticWrapper.append(button);
     button.addEventListener("click", gameStart);
   };
