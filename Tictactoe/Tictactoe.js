@@ -1,3 +1,4 @@
+"use strict";
 {
   const makeScreen = () => {
     const ticWrapper = document.createElement("section");
@@ -15,6 +16,7 @@
             `;
     }
     table.style.width = "250px";
+    table.style.borderCollapse = "collapse";
     table.style.textAlign = "center";
 
     ticWrapper.classList.add("tictactoe");
@@ -26,6 +28,11 @@
 
   const gameStart = () => {
     makeScreen();
+    const ticWrapper = document.querySelector(".tictactoe");
+    const table = ticWrapper.querySelector("table");
+    table.addEventListener("click", function (e) {
+      console.log(e.target);
+    });
   };
 
   const gameStartButton = () => {
