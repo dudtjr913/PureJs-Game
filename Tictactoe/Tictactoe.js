@@ -31,6 +31,12 @@
     ticWrapper.append(table);
   };
 
+  const gameClose = () => {
+    const ticWrapper = document.querySelector(".tictactoe");
+    document.body.removeChild(ticWrapper);
+    return gameStartButton();
+  };
+
   const reStartButton = () => {
     const ticWrapper = document.querySelector(".tictactoe");
     const button = document.createElement("button");
@@ -105,6 +111,7 @@
   };
 
   const gameStart = () => {
+    gameFinishButton();
     makeScreen();
     const ticWrapper = document.querySelector(".tictactoe");
     const table = ticWrapper.querySelector("table");
@@ -120,10 +127,22 @@
   };
 
   const gameStartButton = () => {
-    const button = document.createElement("button");
+    let button = document.querySelector(".tic-btn");
+    if (!button) {
+      button = document.createElement("button");
+      button.classList.add("tic-btn");
+      document.body.append(button);
+    }
     button.innerText = "틱택토 시작";
-    document.body.append(button);
+    button.removeEventListener("click", gameClose);
     button.addEventListener("click", gameStart);
+  };
+
+  const gameFinishButton = () => {
+    const button = document.querySelector(".tic-btn");
+    button.innerText = "틱택토 종료";
+    button.removeEventListener("click", gameStart);
+    button.addEventListener("click", gameClose);
   };
 
   gameStartButton();
