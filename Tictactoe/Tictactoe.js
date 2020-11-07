@@ -26,20 +26,37 @@
     ticWrapper.append(table);
   };
 
-  const checkWinner = (ticArray) => {
-    for (let i = 0; i < 3; i++) {
-      if (ticArray[i][0] === ticArray[i][1] && ticArray[i][1] === ticArray[i][2]) {
-        console.log("승리");
+  const checkWinner = (ticArray, clickedTd) => {
+    const td = parseInt(clickedTd.id, 10);
+    const tr = parseInt(clickedTd.parentNode.id, 10);
+    if (ticArray[tr][0] === ticArray[tr][1] && ticArray[tr][1] === ticArray[tr][2]) {
+      // 가로줄 3칸 일치할 경우
+      return console.log("승리");
+    }
+    if (ticArray[0][td] === ticArray[1][td] && ticArray[1][td] === ticArray[2][td]) {
+      // 세로줄 3칸 일치할 경우
+      return console.log("승리");
+    }
+    if (td === tr) {
+      if (ticArray[0][0] === ticArray[1][1] && ticArray[1][1] === ticArray[2][2]) {
+        // 대각선 왼쪽 위에서 아래로 3칸 일치할 경우
+        return console.log("승리");
+      }
+    }
+    if ((td === 1 && tr === 1) || (td === 2 && tr === 0) || (td === 0 && tr === 2)) {
+      if (ticArray[0][2] === ticArray[1][1] && ticArray[1][1] === ticArray[2][0]) {
+        // 대각선 오른쪽 위에서 아래로 3칸 일치할 경우
+        return console.log("승리");
       }
     }
   };
 
   const handleOnGamimg = (myTurn, ticArray) => (e) => {
     if (!e.target.innerText) {
-      e.target.innerText = myTurn ? "O" : "X";
+      e.target.innerText = myTurn ? "O" : "X"; // turn 번갈아가면서 진행
       myTurn = !myTurn;
-      ticArray[e.target.parentNode.id][e.target.id] = e.target.innerText;
-      checkWinner(ticArray);
+      ticArray[e.target.parentNode.id][e.target.id] = e.target.innerText; // row, column 순서
+      checkWinner(ticArray, e.target); // 배열과 클릭된 target을 인자로 넣어줌
     }
   };
 
@@ -48,7 +65,12 @@
     const ticWrapper = document.querySelector(".tictactoe");
     const table = ticWrapper.querySelector("table");
     const myTurn = true;
-    const ticArray = [[]];
+    const ticArray = [
+      // 게임의 3*3 배열을 미리 만듦
+      ["", "", ""],
+      ["", "", ""],
+      ["", "", ""],
+    ];
     table.addEventListener("click", handleOnGamimg(myTurn, ticArray));
   };
 
