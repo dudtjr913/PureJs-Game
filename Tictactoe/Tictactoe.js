@@ -5,13 +5,13 @@
     const title = document.createElement("h1");
     const table = document.createElement("table");
 
-    for (let i = 1; i <= 3; i++) {
+    for (let i = 0; i < 3; i++) {
       // 3*3 테이블 만들기
       table.innerHTML += `
             <tr style="height : 10vh" id=${i}>
-            <td style="border : 1px solid black; width : calc(100%/3)" id=${i * 3 - 2}></td>
-            <td style="border : 1px solid black; width : calc(100%/3)" id=${i * 3 - 1}></td>
-            <td style="border : 1px solid black; width : calc(100%/3)" id=${i * 3}></td>
+            <td style="border : 1px solid black; width : calc(100%/3)" id="0"></td>
+            <td style="border : 1px solid black; width : calc(100%/3)" id="1"></td>
+            <td style="border : 1px solid black; width : calc(100%/3)" id="2"></td>
             </tr>
             `;
     }
@@ -26,10 +26,20 @@
     ticWrapper.append(table);
   };
 
-  const handleOnGamimg = (myTurn) => (e) => {
+  const checkWinner = (ticArray) => {
+    for (let i = 0; i < 3; i++) {
+      if (ticArray[i][0] === ticArray[i][1] && ticArray[i][1] === ticArray[i][2]) {
+        console.log("승리");
+      }
+    }
+  };
+
+  const handleOnGamimg = (myTurn, ticArray) => (e) => {
     if (!e.target.innerText) {
       e.target.innerText = myTurn ? "O" : "X";
       myTurn = !myTurn;
+      ticArray[e.target.parentNode.id][e.target.id] = e.target.innerText;
+      checkWinner(ticArray);
     }
   };
 
@@ -38,7 +48,8 @@
     const ticWrapper = document.querySelector(".tictactoe");
     const table = ticWrapper.querySelector("table");
     const myTurn = true;
-    table.addEventListener("click", handleOnGamimg(myTurn));
+    const ticArray = [[]];
+    table.addEventListener("click", handleOnGamimg(myTurn, ticArray));
   };
 
   const gameStartButton = () => {
