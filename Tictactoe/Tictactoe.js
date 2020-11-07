@@ -1,6 +1,11 @@
 "use strict";
 {
   const makeScreen = () => {
+    const exWrapper = document.body.querySelector(".tictactoe");
+    if (exWrapper) {
+      // 이미 ticWrapper가 존재할 경우 없애고 새로 만듦
+      document.body.removeChild(exWrapper);
+    }
     const ticWrapper = document.createElement("section");
     const title = document.createElement("h1");
     const table = document.createElement("table");
@@ -26,6 +31,15 @@
     ticWrapper.append(table);
   };
 
+  const reStartButton = () => {
+    const ticWrapper = document.querySelector(".tictactoe");
+    const button = document.createElement("button");
+    button.innerText = "다시하기";
+    button.style.transform = "translate(90px, 30px)";
+    ticWrapper.append(button);
+    button.addEventListener("click", gameStart);
+  };
+
   const showOnWinner = (turn) => {
     const ticWrapper = document.querySelector(".tictactoe");
     const table = document.querySelector("table");
@@ -40,11 +54,21 @@
     winner.append(result);
     ticWrapper.append(winner);
     ticWrapper.removeChild(table);
+    return reStartButton();
   };
 
-  const checkWinner = (ticArray, clickedTd) => {
+  const showOnDraw = () => {
+    const ticWrapper = document.querySelector(".tictactoe");
+    const draw = document.createElement("div");
+    draw.innerText = "무승부입니다.";
+    ticWrapper.append(draw);
+    return reStartButton();
+  };
+
+  const checkWinner = (ticArray, clickedTd, fullArray) => {
     const td = parseInt(clickedTd.id, 10);
     const tr = parseInt(clickedTd.parentNode.id, 10);
+    fullArray.push(td);
     if (ticArray[tr][0] === ticArray[tr][1] && ticArray[tr][1] === ticArray[tr][2]) {
       // 가로줄 3칸 일치할 경우
       return showOnWinner(clickedTd.innerText);
@@ -65,14 +89,18 @@
         return showOnWinner(clickedTd.innerText);
       }
     }
+    if (fullArray.length === 9) {
+      // 셀이 모두 선택된 경우
+      return showOnDraw();
+    }
   };
 
-  const handleOnGaming = (myTurn, ticArray) => (e) => {
+  const handleOnGaming = (myTurn, ticArray, fullArray) => (e) => {
     if (e.target.innerText === "") {
       e.target.innerText = myTurn ? "O" : "X"; // turn 번갈아가면서 진행
       myTurn = !myTurn;
       ticArray[e.target.parentNode.id][e.target.id] = e.target.innerText; // row, column 순서
-      checkWinner(ticArray, e.target, myTurn); // 배열과 클릭된 target을 인자로 넣어줌
+      checkWinner(ticArray, e.target, fullArray); // 배열과 클릭된 target을 인자로 넣어줌
     }
   };
 
@@ -87,7 +115,8 @@
       ["", "", ""],
       ["", "", ""],
     ];
-    table.addEventListener("click", handleOnGaming(myTurn, ticArray));
+    const fullArray = []; // 이 배열의 length가 9가 되면 게임 종료
+    table.addEventListener("click", handleOnGaming(myTurn, ticArray, fullArray));
   };
 
   const gameStartButton = () => {
