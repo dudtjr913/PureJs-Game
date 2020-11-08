@@ -2,7 +2,7 @@
 {
   const lottoSelect = () => {
     const numbers = []; // 로또 번호 6자리
-    const allNumbers = Array(10) // 1~45
+    const allNumbers = Array(45) // 1~45
       .fill()
       .map((v, i) => i + 1);
     while (numbers.length < 6) {
@@ -73,6 +73,12 @@
 
     lottoWrapper.appendChild(form);
     form.appendChild(button);
+  };
+
+  const clearScreen = () => {
+    const lottoWrapper = document.body.querySelector(".lotto-wrapper");
+    document.body.removeChild(lottoWrapper);
+    return gameStartButton();
   };
 
   const handleOnResult = (lottoNumbers, clickedNumbers) => {
@@ -185,6 +191,7 @@
 
   const gameStart = () => {
     makeScreen();
+    gameFinishButton();
     const lottoNumbers = lottoSelect();
     const lottoWrapper = document.body.querySelector(".lotto-wrapper");
     const form = lottoWrapper.querySelector("form");
@@ -192,11 +199,22 @@
   };
 
   const gameStartButton = () => {
-    const button = document.createElement("button");
+    let button = document.querySelector(".lotto-btn");
+    if (!button) {
+      button = document.createElement("button");
+      button.classList.add("lotto-btn");
+      document.body.appendChild(button);
+    }
     button.innerText = "로또 추첨기 시작";
-    button.classList.add("lotto-btn");
-    document.body.appendChild(button);
+    button.removeEventListener("click", clearScreen);
     button.addEventListener("click", gameStart);
+  };
+
+  const gameFinishButton = () => {
+    const button = document.querySelector(".lotto-btn");
+    button.innerText = "로또 추첨기 종료";
+    button.removeEventListener("click", gameStart);
+    button.addEventListener("click", clearScreen);
   };
 
   gameStartButton();
