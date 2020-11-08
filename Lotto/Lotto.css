@@ -25,6 +25,10 @@
   user-select: none;
 }
 
+.lotto-wrapper span:hover {
+  background-color: red;
+}
+
 .lotto-wrapper .clicked {
   background-color: red;
 }
