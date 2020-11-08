@@ -38,7 +38,7 @@
   background-color: red;
 }
 
-.lotto-wrapper button {
+.lotto-wrapper .submit-btn {
   float: right;
   background-color: white;
   cursor: pointer;
