@@ -69,6 +69,36 @@
     form.appendChild(button);
   };
 
+  const paintNumber = (number) => {
+    if (number.innerText >= 1 && number.innerText <= 10) {
+      // 숫자별로 배경색 바꿔주기
+      number.style.backgroundColor = "yellow";
+    } else if (number.innerText >= 11 && number.innerText <= 20) {
+      number.style.backgroundColor = "blue";
+    } else if (number.innerText >= 21 && number.innerText <= 30) {
+      number.style.backgroundColor = "red";
+    } else if (number.innerText >= 31 && number.innerText <= 40) {
+      number.style.backgroundColor = "black";
+      number.style.color = "white";
+    } else {
+      number.style.backgroundColor = "green";
+    }
+  };
+
+  const handleOnNumber = (index, numbers) => () => {
+    const lottoWrapper = document.body.querySelector(".lotto-wrapper");
+    const li = lottoWrapper.querySelector("li");
+    // setInterval로 화면에 숫자 한 개씩 띄워주기
+    if (index === 6) {
+      return clearInterval();
+    }
+    const number = document.createElement("span");
+    number.innerText = numbers[index];
+    paintNumber(number);
+    li.appendChild(number);
+    index++;
+  };
+
   const showOnNumbers = (lottoNumbers) => {
     const { numbers, lottoBonusNumber } = lottoNumbers;
     const lottoWrapper = document.body.querySelector(".lotto-wrapper");
@@ -79,23 +109,18 @@
       lottoWrapper.removeChild(lottoWrapper.firstChild);
     }
 
-    lottoWrapper.innerHTML = "<h1>결과</h1>";
-
-    const show = setInterval(function () {
-      // setInterval로 화면에 숫자 한 개씩 띄워주기
-      if (index === 6) {
-        return clearInterval(show);
-      }
-      const number = document.createElement("span");
-      number.innerText = numbers[index];
-      lottoWrapper.appendChild(number);
-      index++;
-    }, 1000);
+    lottoWrapper.innerHTML = "<h1>결과</h1><ul><li></li></ul>";
+    const li = lottoWrapper.querySelector("li");
+    setInterval(handleOnNumber(index, numbers), 1000);
 
     setTimeout(function () {
       const bonusNumber = document.createElement("span");
-      bonusNumber.innerHTML = `<span>보너스 숫자 : </span>${lottoBonusNumber}`;
-      lottoWrapper.appendChild(bonusNumber);
+      const div = document.createElement("div");
+      bonusNumber.innerText = lottoBonusNumber;
+      div.innerText = "+";
+      paintNumber(bonusNumber);
+      li.appendChild(div);
+      li.appendChild(bonusNumber);
     }, 7000);
   };
 

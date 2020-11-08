@@ -12,7 +12,7 @@
   text-align: center;
 }
 
-.lotto-wrapper li > span {
+.lotto-wrapper li span {
   border: 1px solid black;
   border-radius: 50%;
   font-size: 30px;
@@ -25,8 +25,13 @@
   user-select: none;
 }
 
-.lotto-wrapper span:hover {
-  background-color: red;
+.lotto-wrapper li > div {
+  margin-left: 10px;
+  font-size: 45px;
+}
+
+.lotto-wrapper li > div > span {
+  display: inline-block;
 }
 
 .lotto-wrapper .clicked {
