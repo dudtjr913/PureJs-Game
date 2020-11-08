@@ -21,6 +21,7 @@
 
   const handleOnNumberClick = (e) => {
     // 숫자 클릭하면 class를 붙여줌
+    console.log(e.target.innerText);
     e.target.classList.toggle("clicked");
   };
 
@@ -43,12 +44,12 @@
     lottoWrapper.appendChild(div);
     lottoWrapper.appendChild(numbersUl);
 
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i < 5; i++) {
       // 1 ~ 45까지의 숫자 화면에 표시
       const numbersList = document.createElement("li");
-      for (let j = 1; j <= 5; j++) {
+      for (let j = 1; j <= 9; j++) {
         const number = document.createElement("span");
-        number.innerText = j + 5 * i; // 1 ~ 45
+        number.innerText = j + 9 * i; // 1 ~ 45
         number.addEventListener("click", handleOnNumberClick); // 숫자 클릭 시 콜백함수 호출
         numbersList.appendChild(number);
       }

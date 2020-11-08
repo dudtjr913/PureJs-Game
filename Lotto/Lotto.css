@@ -1,0 +1,40 @@
+.lotto-wrapper {
+  max-width: 560px;
+}
+
+.lotto-wrapper ul {
+  list-style: none;
+  padding: 0px;
+}
+
+.lotto-wrapper li {
+  display: flex;
+  text-align: center;
+}
+
+.lotto-wrapper span {
+  border: 1px solid black;
+  border-radius: 50%;
+  font-size: 30px;
+  margin-left: 10px;
+  margin-top: 10px;
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.lotto-wrapper .clicked {
+  background-color: red;
+}
+
+.lotto-wrapper button {
+  float: right;
+  background-color: white;
+  cursor: pointer;
+  font-size: 20px;
+}
+.lotto-wrapper button:hover {
+  background-color: grey;
+}
