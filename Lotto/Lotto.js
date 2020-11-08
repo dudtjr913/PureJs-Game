@@ -1,27 +1,36 @@
 "use strict";
 {
   const lottoSelect = () => {
-    const lottoNumbers = []; // 로또 번호 6자리
+    const numbers = []; // 로또 번호 6자리
     const allNumbers = Array(45) // 1~45
       .fill()
       .map((v, i) => i + 1);
-    while (lottoNumbers.length < 6) {
+    while (numbers.length < 6) {
       const selectIndex = Math.floor(Math.random() * allNumbers.length); // 로또 번호 index 뽑기
-      lottoNumbers.push(allNumbers[selectIndex]); // 로또 번호 결과에 넣기
+      numbers.push(allNumbers[selectIndex]); // 로또 번호 결과에 넣기
       allNumbers.splice(selectIndex, 1); // 뽑힌 숫자 1~45에서 삭제하기
     }
     const bonusNumberIndex = Math.floor(Math.random() * allNumbers.length); // 보너스 숫자 index 뽑기
     const lottoBonusNumber = allNumbers[bonusNumberIndex]; // 보너스 숫자 1개 뽑기
 
     return {
-      lottoNumbers,
+      numbers: numbers.sort((a, b) => a - b),
       lottoBonusNumber,
     };
   };
 
   const handleOnNumberClick = (e) => {
+    const lottowrapper = document.querySelector(".lotto-wrapper");
+    const clickednumbers = lottowrapper.querySelectorAll(".clicked"); // 클릭된 숫자
+    if (!e.target.className) {
+      // 클릭하려는 숫자가 이미 클릭이 되었는지 확인
+      // 클릭이 되어있으면 아래 검사를 하지 않고 클릭 취소를 하기 위함
+      if (clickednumbers.length > 5) {
+        // 숫자 7개 이상 클릭 시 에러메시지
+        return alert("숫자는 6개까지만 선택가능합니다.");
+      }
+    }
     // 숫자 클릭하면 class를 붙여줌
-    console.log(e.target.innerText);
     e.target.classList.toggle("clicked");
   };
 
@@ -60,5 +69,56 @@
     form.appendChild(button);
   };
 
-  makeScreen();
+  const showOnNumbers = (lottoNumbers) => {
+    const { numbers, lottoBonusNumber } = lottoNumbers;
+    const lottoWrapper = document.body.querySelector(".lotto-wrapper");
+    let index = 0; // 로또 번호의 index를 0부터 5까지 가져오게 하기 위함
+
+    while (lottoWrapper.firstChild) {
+      // 기존의 화면을 지워준다.
+      lottoWrapper.removeChild(lottoWrapper.firstChild);
+    }
+
+    lottoWrapper.innerHTML = "<h1>결과</h1>";
+
+    const show = setInterval(function () {
+      // setInterval로 화면에 숫자 한 개씩 띄워주기
+      if (index === 6) {
+        return clearInterval(show);
+      }
+      const number = document.createElement("span");
+      number.innerText = numbers[index];
+      lottoWrapper.appendChild(number);
+      index++;
+    }, 1000);
+
+    setTimeout(function () {
+      const bonusNumber = document.createElement("span");
+      bonusNumber.innerHTML = `<span>보너스 숫자 : </span>${lottoBonusNumber}`;
+      lottoWrapper.appendChild(bonusNumber);
+    }, 7000);
+  };
+
+  const handleOnResult = (lottoNumbers) => (e) => {
+    e.preventDefault();
+    showOnNumbers(lottoNumbers);
+  };
+
+  const gameStart = () => {
+    makeScreen();
+    const lottoNumbers = lottoSelect();
+    const lottoWrapper = document.body.querySelector(".lotto-wrapper");
+    const form = lottoWrapper.querySelector("form");
+    form.addEventListener("click", handleOnResult(lottoNumbers));
+  };
+
+  const gameStartButton = () => {
+    const button = document.createElement("button");
+    button.innerText = "로또 추첨기 시작";
+    button.classList.add("lotto-btn");
+    document.body.appendChild(button);
+    button.addEventListener("click", gameStart);
+  };
+
+  gameStartButton();
 }

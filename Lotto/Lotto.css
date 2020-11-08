@@ -12,7 +12,7 @@
   text-align: center;
 }
 
-.lotto-wrapper span {
+.lotto-wrapper li > span {
   border: 1px solid black;
   border-radius: 50%;
   font-size: 30px;
