@@ -1,0 +1,9 @@
+body > button {
+  background-color: white;
+  cursor: pointer;
+  margin-left: 20px;
+}
+
+body > button:hover {
+  background-color: gray;
+}
