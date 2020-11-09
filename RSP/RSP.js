@@ -29,18 +29,45 @@
     image.src = "RSP/RSP.jpeg";
     image.classList.add("rock");
 
-    const changing = setInterval(() => {
-      changeRSP.call(null, image);
-      if (image.className === "paper") {
-        clearInterval(changing);
-      }
-    }, 1000); // 가위바위보 순서대로 화면에 출력
+    const changing = setInterval(changeRSP.bind(null, image), 1000); // 가위바위보 순서대로 화면에 출력
 
     document.body.appendChild(RSPWrapper);
     RSPWrapper.appendChild(title);
     RSPWrapper.appendChild(imageWrapper);
     imageWrapper.appendChild(image);
+
+    return changing;
   };
 
-  makeScreen();
+  const cleanScreen = () => {
+    const RSPWrapper = document.querySelector(".RSP-wrapper");
+    document.body.removeChild(RSPWrapper);
+    return gameStartButton();
+  };
+
+  const gameStart = () => {
+    const intervalValue = makeScreen(); // 게임 화면 만들면서 setInterval 가져옴 - 나중에 clear해주기 위함
+    gameFinishButton();
+  };
+
+  const gameStartButton = () => {
+    let button = document.querySelector(".RSP-btn");
+    if (!button) {
+      button = document.createElement("button");
+      button.classList.add("RSP-btn");
+      document.body.appendChild(button);
+    }
+    button.innerText = "가위바위보 시작";
+    button.removeEventListener("click", cleanScreen);
+    button.addEventListener("click", gameStart);
+  };
+
+  const gameFinishButton = () => {
+    const button = document.querySelector(".RSP-btn");
+    button.innerText = "가위바위보 종료";
+    button.removeEventListener("click", gameStart);
+    button.addEventListener("click", cleanScreen);
+  };
+
+  gameStartButton();
 }
