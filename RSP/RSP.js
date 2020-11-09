@@ -45,9 +45,34 @@
     return gameStartButton();
   };
 
+  const handleOnResult = (intervalValue) => async (e) => {
+    e.preventDefault();
+    const RSPWrapper = document.querySelector(".RSP-wrapper");
+    const image = RSPWrapper.querySelector("img");
+    clearInterval(intervalValue);
+    const timeoutValue = setTimeout(() => {
+      intervalValue = setInterval(changeRSP.bind(null, image), 1000);
+      console.log(intervalValue);
+    }, 1000);
+  };
+
+  const userSelectButton = (intervalValue) => {
+    const RSPWrapper = document.querySelector(".RSP-wrapper");
+    const buttonWrapper = document.createElement("div");
+    buttonWrapper.innerHTML = `
+    <button class="rock-btn" type="submit">바위</button>
+    <button class="scissors-btn" type="submit">가위</button>
+    <button class="paper-btn" type="submit">보</button>
+    `;
+    RSPWrapper.appendChild(buttonWrapper);
+    const buttons = Array.from(RSPWrapper.querySelectorAll("button"));
+    buttons.forEach((v) => v.addEventListener("click", handleOnResult(intervalValue))); // 클릭하면 결과 보여주기
+  };
+
   const gameStart = () => {
     const intervalValue = makeScreen(); // 게임 화면 만들면서 setInterval 가져옴 - 나중에 clear해주기 위함
     gameFinishButton();
+    userSelectButton(intervalValue);
   };
 
   const gameStartButton = () => {
