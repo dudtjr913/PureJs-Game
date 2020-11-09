@@ -1,0 +1,15 @@
+.RSP-wrapper img {
+  max-height: 250px;
+}
+
+.RSP-wrapper .rock {
+  transform: translateX(0px);
+}
+
+.RSP-wrapper .scissors {
+  transform: translateX(-190px);
+}
+
+.RSP-wrapper .paper {
+  transform: translateX(-395px);
+}
