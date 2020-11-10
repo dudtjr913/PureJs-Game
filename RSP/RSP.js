@@ -39,47 +39,45 @@
     return changing;
   };
 
-  const debounce = (eventName, func, time, any) => {
-    // 한 번에 여러번 클릭하는 것 방지
-    let setTime = null;
-
-    return () => {
-      console.log(setTime);
-      clearTimeout(setTime);
-      setTime = setTimeout(func.bind(null, any), time);
-    };
-  };
-
   const cleanScreen = () => {
     const RSPWrapper = document.querySelector(".RSP-wrapper");
     document.body.removeChild(RSPWrapper);
     return gameStartButton();
   };
 
-  const handleOnResult = (intervalValue) => {
-    console.log("dd");
+  const handleOnResult = (intervalValue) => (e) => {
     const RSPWrapper = document.querySelector(".RSP-wrapper");
     const image = RSPWrapper.querySelector("img");
-    clearInterval(intervalValue);
-    const timeoutValue = setTimeout(() => {
-      intervalValue = setInterval(changeRSP.bind(null, image), 1000);
-      console.log(intervalValue);
-    }, 1000);
+    let timeoutValue = null;
+
+    return () => {
+      console.log("dd");
+      clearInterval(intervalValue);
+      clearTimeout(timeoutValue);
+      timeoutValue = setTimeout(() => {
+        intervalValue = setInterval(changeRSP.bind(null, image), 1000);
+        console.log(intervalValue);
+      }, 1000);
+    };
   };
 
   const userSelectButton = (intervalValue) => {
     const RSPWrapper = document.querySelector(".RSP-wrapper");
     const buttonWrapper = document.createElement("div");
     buttonWrapper.innerHTML = `
+    <div class="buttons-wrapper">
     <button class="rock-btn" type="submit">바위</button>
     <button class="scissors-btn" type="submit">가위</button>
     <button class="paper-btn" type="submit">보</button>
+    </div>
     `;
     RSPWrapper.appendChild(buttonWrapper);
-    const buttons = Array.from(RSPWrapper.querySelectorAll("button"));
-    buttons.forEach((v) =>
-      v.addEventListener("click", debounce("v", handleOnResult, 3000, intervalValue))
-    ); // 클릭하면 결과 보여주기
+
+    const buttons = RSPWrapper.querySelector(".buttons-wrapper");
+    buttons.addEventListener("click", handleOnResult(intervalValue)());
+
+    /*const buttons = Array.from(RSPWrapper.querySelectorAll("button"));
+    buttons.forEach((v) => v.addEventListener("click", handleOnResult(intervalValue))); // 클릭하면 결과 보여주기*/
   };
 
   const gameStart = () => {
