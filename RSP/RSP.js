@@ -39,14 +39,25 @@
     return changing;
   };
 
+  const debounce = (eventName, func, time, any) => {
+    // 한 번에 여러번 클릭하는 것 방지
+    let setTime = null;
+
+    return () => {
+      console.log(setTime);
+      clearTimeout(setTime);
+      setTime = setTimeout(func.bind(null, any), time);
+    };
+  };
+
   const cleanScreen = () => {
     const RSPWrapper = document.querySelector(".RSP-wrapper");
     document.body.removeChild(RSPWrapper);
     return gameStartButton();
   };
 
-  const handleOnResult = (intervalValue) => async (e) => {
-    e.preventDefault();
+  const handleOnResult = (intervalValue) => {
+    console.log("dd");
     const RSPWrapper = document.querySelector(".RSP-wrapper");
     const image = RSPWrapper.querySelector("img");
     clearInterval(intervalValue);
@@ -66,7 +77,9 @@
     `;
     RSPWrapper.appendChild(buttonWrapper);
     const buttons = Array.from(RSPWrapper.querySelectorAll("button"));
-    buttons.forEach((v) => v.addEventListener("click", handleOnResult(intervalValue))); // 클릭하면 결과 보여주기
+    buttons.forEach((v) =>
+      v.addEventListener("click", debounce("v", handleOnResult, 3000, intervalValue))
+    ); // 클릭하면 결과 보여주기
   };
 
   const gameStart = () => {
