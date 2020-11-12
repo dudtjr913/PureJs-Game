@@ -29,7 +29,7 @@
     image.src = 'RSP/RSP.jpeg';
     image.classList.add('rock');
 
-    const changing = setInterval(changeRSP.bind(null, image), 1000); // 가위바위보 순서대로 화면에 출력
+    const changing = setInterval(changeRSP.bind(null, image), 100); // 가위바위보 순서대로 화면에 출력
 
     document.body.appendChild(RSPWrapper);
     RSPWrapper.appendChild(title);
@@ -45,21 +45,65 @@
     return gameStartButton();
   };
 
-  const debounce = (func, time, interval) => {
-    const prevFunc = func(interval);
-    let setTime = null;
-    return (e) => {
-      setTime = setTimeout(prevFunc.bind(null, e), time);
-    };
+  const handleOnResult = (e, image, RSPWrapper) => {
+    const resultDiv = document.createElement('div');
+    resultDiv.classList.add('result');
+    RSPWrapper.appendChild(resultDiv);
+
+    if (image.className === 'rock') {
+      switch (e.target.innerText) {
+        case '바위':
+          resultDiv.innerText = '비겼습니다.';
+          break;
+        case '가위':
+          resultDiv.innerText = '패배하셨습니다.';
+          break;
+        case '보':
+          resultDiv.innerText = '이겼습니다.';
+          break;
+      }
+    } else if ((image.className = 'scissors')) {
+      switch (e.target.innerText) {
+        case '바위':
+          resultDiv.innerText = '이겼습니다.';
+          break;
+        case '가위':
+          resultDiv.innerText = '비겼습니다.';
+          break;
+        case '보':
+          resultDiv.innerText = '패배하셨습니다.';
+          break;
+      }
+    } else {
+      switch (e.target.innerText) {
+        case '바위':
+          resultDiv.innerText = '패배하셨습니다.';
+          break;
+        case '가위':
+          resultDiv.innerText = '이겼습니다.';
+          break;
+        case '보':
+          resultDiv.innerText = '비겼습니다.';
+          break;
+      }
+    }
   };
 
-  const handleOnResult = (interval) => {
+  const handleOnStop = (intervalValue) => {
     const RSPWrapper = document.querySelector('.RSP-wrapper');
     const image = RSPWrapper.querySelector('img');
+    let setTime = null;
     return (e) => {
-      console.log(interval);
-      clearInterval(interval);
-      interval = setInterval(changeRSP.bind(null, image), 1000);
+      const resultDiv = RSPWrapper.querySelector('.result');
+      handleOnResult(e, image, RSPWrapper);
+      clearInterval(intervalValue);
+      clearTimeout(setTime);
+      setTime = setTimeout(() => {
+        intervalValue = setInterval(changeRSP.bind(null, image), 100);
+        if (resultDiv) {
+          RSPWrapper.removeChild(resultDiv);
+        }
+      }, 1000);
     };
   };
 
@@ -76,7 +120,7 @@
     RSPWrapper.appendChild(buttonWrapper);
 
     const buttons = RSPWrapper.querySelector('.buttons-wrapper');
-    buttons.addEventListener('click', debounce(handleOnResult, 500, intervalValue));
+    buttons.addEventListener('click', handleOnStop(intervalValue));
   };
 
   const gameStart = () => {
