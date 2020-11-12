@@ -8,6 +8,7 @@
     const input = document.createElement('input');
     const life = document.createElement('div');
     const answer = document.createElement('div');
+    const timeDiv = document.createElement('div');
 
     gugudanWrapper.classList.add('gugudan');
     document.body.append(gugudanWrapper);
@@ -25,6 +26,9 @@
     form.append(input);
     gugudanWrapper.append(life);
     gugudanWrapper.append(answer);
+    timeDiv.classList.add('time');
+    timeDiv.innerText = '남은시간 : 10초';
+    gugudanWrapper.append(timeDiv);
   };
 
   const gameFinish = () => {
@@ -44,7 +48,7 @@
     reStartButton.innerText = '다시하기';
     gugudanWrapper.removeChild(form);
     gugudanWrapper.append(reStartButton);
-    reStartButton.addEventListener('click', gameFinish());
+    reStartButton.addEventListener('click', gameFinish);
   };
 
   const rightAnswer = (gugudanWrapper) => {
@@ -54,12 +58,14 @@
     multipleDiv.innerText = `${Math.ceil(Math.random() * 19)} X ${Math.ceil(Math.random() * 19)}`;
   };
 
-  const wrongAnswer = (lifeNumber, gugudanWrapper) => {
+  const wrongAnswer = (lifeNumber, gugudanWrapper) => () => {
     const life = gugudanWrapper.querySelector('.life');
-    life.innerText = `목숨 : ${lifeNumber}`;
+    life.innerText = `목숨 : ${--lifeNumber}`;
     const answer = gugudanWrapper.querySelector('.answer');
     answer.innerText = '오답입니다 목숨이 1 감소합니다.';
-    if (lifeNumber === 0) return reStart(gugudanWrapper);
+    if (lifeNumber === 0) {
+      return reStart(gugudanWrapper);
+    }
   };
 
   const convertAnswer = (gugudanWrapper) => {
@@ -69,21 +75,38 @@
     return multipleNumber.slice(0, X - 1) * multipleNumber.slice(X + 2);
   };
 
-  const handleOnUserInput = (life, gugudanWrapper) => (e) => {
-    e.preventDefault();
-    const input = gugudanWrapper.querySelector('input');
-    const answer = convertAnswer(gugudanWrapper);
-    parseInt(input.value, 10) === answer ? rightAnswer(gugudanWrapper) : wrongAnswer(--life, gugudanWrapper);
-    input.value = '';
+  const handleOnTime = (time, gugudanWrapper, timeOut) => () => {
+    const timeDiv = gugudanWrapper.querySelector('.time');
+    timeDiv.innerText = `남은시간 : ${--time}초`;
+    if (time === 0) {
+      time = 10;
+      return timeOut();
+    }
+  };
+
+  const handleOnUserInput = (wrong, gugudanWrapper, time, timeInterval) => {
+    return (e) => {
+      e.preventDefault();
+      clearInterval(timeInterval);
+      time = 10;
+      timeInterval = setInterval(handleOnTime(time, gugudanWrapper, wrong), 1000);
+      const input = gugudanWrapper.querySelector('input');
+      const answer = convertAnswer(gugudanWrapper);
+      parseInt(input.value, 10) === answer ? rightAnswer(gugudanWrapper) : wrong();
+      input.value = '';
+    };
   };
 
   const gameStart = () => {
     gameFinishButton();
     makeScreen();
+    const gugudanWrapper = document.body.querySelector('.gugudan');
     const life = 5;
-    const gugudanWrapper = document.querySelector('.gugudan');
+    const time = 10;
     const form = gugudanWrapper.querySelector('form');
-    form.addEventListener('submit', handleOnUserInput(life, gugudanWrapper));
+    const wrong = wrongAnswer(life, gugudanWrapper); // 시간초과 됐을 때
+    const timeInterval = setInterval(handleOnTime(time, gugudanWrapper, wrong), 1000);
+    form.addEventListener('submit', handleOnUserInput(wrong, gugudanWrapper, time, timeInterval));
   };
 
   const gameStartButton = () => {
