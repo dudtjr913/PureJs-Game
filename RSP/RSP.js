@@ -45,14 +45,6 @@
     return gameStartButton();
   };
 
-  const debounce = (func, time) => {
-    let setTime = null;
-    return (e) => {
-      clearTimeout(setTime);
-      setTime = setTimeout(func.bind(null, e), time);
-    };
-  };
-
   const handleOnResult = (image, RSPWrapper, e) => {
     const resultDiv = document.createElement('div');
     resultDiv.classList.add('result');
@@ -101,18 +93,17 @@
     const RSPWrapper = document.querySelector('.RSP-wrapper');
     const image = RSPWrapper.querySelector('img');
     let setTime = null;
-    const resultDebounce = debounce(handleOnResult.bind(null, image, RSPWrapper), 300); // 결과 0.3초 후에 보여주기 - 0.3초 동안 클릭하는 것은 debounce처리 됨
     return (e) => {
       const resultDiv = RSPWrapper.querySelector('.result');
       if (resultDiv) {
         RSPWrapper.removeChild(resultDiv);
       }
-      resultDebounce(e);
       clearInterval(intervalValue);
       clearTimeout(setTime);
       setTime = setTimeout(() => {
         intervalValue = setInterval(changeRSP.bind(null, image), 100);
-      }, 300);
+        handleOnResult(image, RSPWrapper, e);
+      }, 200);
     };
   };
 
