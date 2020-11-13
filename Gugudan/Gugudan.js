@@ -60,12 +60,16 @@
     multipleDiv.innerText = `${Math.ceil(Math.random() * 19)} X ${Math.ceil(Math.random() * 19)}`;
   };
 
-  const wrongAnswer = (lifeNumber, gugudanWrapper) => () => {
+  const wrongAnswer = (lifeNumber, gugudanWrapper) => (timeout) => {
     const time = gugudanWrapper.querySelector(".time");
     const life = gugudanWrapper.querySelector(".life");
     life.innerText = `목숨 : ${--lifeNumber}`;
     const answer = gugudanWrapper.querySelector(".answer");
-    answer.innerText = "오답입니다 목숨이 1 감소합니다.";
+    if (timeout) {
+      answer.innerText = "시간 초과로 목숨 1 감소합니다.";
+    } else {
+      answer.innerText = "오답입니다 목숨이 1 감소합니다.";
+    }
     if (lifeNumber === 0) {
       gugudanWrapper.removeChild(time);
       clearInterval(timeInterval);
@@ -85,7 +89,7 @@
     timeDiv.innerText = `남은시간 : ${--time}초`;
     if (time === 0) {
       time = 5;
-      return wrong();
+      return wrong("시간초과");
     }
   };
 
