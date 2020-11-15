@@ -134,10 +134,63 @@
     button.addEventListener("click", handleOnSubmit(row, col, mine));
   };
 
+  const gameLose = () => {
+    console.log("패배");
+  };
+
+  const cellOpen = (table, row, col, minePosition) => {
+    const cell = table.children[row].children[col];
+    console.log(row, col);
+    if (minePosition[row][col] === 0) {
+      if (minePosition[row - 1]) {
+        minePosition[row - 1][col - 1] !== undefined &&
+          cellOpen(table, row - 1, col - 1, minePosition);
+
+        minePosition[row - 1][col] !== undefined && cellOpen(table, row - 1, col, minePosition);
+
+        minePosition[row - 1][col + 1] !== undefined &&
+          cellOpen(table, row - 1, col + 1, minePosition);
+      }
+
+      minePosition[row][col - 1] !== undefined && cellOpen(table, row, col - 1, minePosition);
+      minePosition[row][col + 1] !== undefined && cellOpen(table, row, col + 1, minePosition);
+
+      if (minePosition[row + 1]) {
+        minePosition[row + 1][col - 1] !== undefined &&
+          cellOpen(table, row + 1, col - 1, minePosition);
+
+        minePosition[row + 1][col] !== undefined && cellOpen(table, row + 1, col, minePosition);
+
+        minePosition[row + 1][col + 1] !== undefined &&
+          cellOpen(table, row + 1, col + 1, minePosition);
+      }
+
+      cell.innerText = 0;
+    } else if (minePosition[row][col] === -7) {
+      return;
+    } else {
+      cell.innerText = minePosition[row][col];
+      return;
+    }
+  };
+
   const handleOnTableLeftClick = (minePosition) => (e) => {
-    const row = e.target.parentNode.className;
-    const column = e.target.className;
-    e.target.innerText = minePosition[row][column];
+    const row = parseInt(e.target.parentNode.className, 10);
+    const column = parseInt(e.target.className, 10);
+    const table = e.target.parentNode.parentNode;
+    if (minePosition[row][column] !== 0) {
+      // 주변에 지뢰가 있는 곳
+      if (minePosition[row][column] === -7) {
+        // 지뢰 찾으면
+        e.target.innerText = "지뢰";
+        gameLose(); // 게임패배
+        return;
+      }
+      e.target.innerText = minePosition[row][column];
+      return;
+    }
+
+    cellOpen(table, row, column, minePosition);
   };
 
   const handleOnTableRightClick = (e) => {
