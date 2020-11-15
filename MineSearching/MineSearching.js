@@ -40,15 +40,15 @@
 
   const makeOnGame = (row, column, mine) => {
     const tableArray = [];
-    for (let i = 1; i <= row; i++) {
+    for (let i = 0; i < row; i++) {
       const rowArray = [];
-      for (let j = 1; j <= column; j++) {
+      for (let j = 0; j < column; j++) {
         rowArray.push(0);
       }
       tableArray.push(rowArray);
     }
 
-    for (let k = 1; k <= mine; ) {
+    for (let k = 0; k < mine; ) {
       // 마인 심기
       const randomRow = Math.floor(Math.random() * row);
       const randomCol = Math.floor(Math.random() * column);
@@ -57,6 +57,33 @@
         k++;
       }
     }
+
+    for (let z = 0; z < row; z++) {
+      for (let x = 0; x < column; x++) {
+        if (tableArray[z][x] === -7) {
+          // 마인이 있는 칸은 건너뜀
+          break;
+        }
+        if (tableArray[z - 1]) {
+          // 가로 한 칸 윗 줄
+          tableArray[z - 1][x - 1] === -7 && tableArray[z][x]++;
+          tableArray[z - 1][x] === -7 && tableArray[z][x]++;
+          tableArray[z - 1][x + 1] === -7 && tableArray[z][x]++;
+        }
+        if (tableArray[z]) {
+          //자신의 줄
+          tableArray[z][x - 1] === -7 && tableArray[z][x]++;
+          tableArray[z][x + 1] === -7 && tableArray[z][x]++;
+        }
+        if (tableArray[z + 1]) {
+          // 가로 한 칸 밑 줄
+          tableArray[z + 1][x - 1] === -7 && tableArray[z][x]++;
+          tableArray[z + 1][x] === -7 && tableArray[z][x]++;
+          tableArray[z + 1][x + 1] === -7 && tableArray[z][x]++;
+        }
+      }
+    }
+
     console.log(tableArray);
     return tableArray;
   };
