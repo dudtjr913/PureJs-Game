@@ -52,34 +52,42 @@
       // 마인 심기
       const randomRow = Math.floor(Math.random() * row);
       const randomCol = Math.floor(Math.random() * column);
-      if (tableArray[randomRow][randomCol] === 0) {
+      if (tableArray[randomRow][randomCol] !== -7) {
         tableArray[randomRow][randomCol] = -7; // -7 = 마인
         k++;
-      }
-    }
 
-    for (let z = 0; z < row; z++) {
-      for (let x = 0; x < column; x++) {
-        if (tableArray[z][x] === -7) {
-          // 마인이 있는 칸은 건너뜀
-          break;
-        }
-        if (tableArray[z - 1]) {
+        if (tableArray[randomRow - 1]) {
           // 가로 한 칸 윗 줄
-          tableArray[z - 1][x - 1] === -7 && tableArray[z][x]++;
-          tableArray[z - 1][x] === -7 && tableArray[z][x]++;
-          tableArray[z - 1][x + 1] === -7 && tableArray[z][x]++;
+          tableArray[randomRow - 1][randomCol - 1] !== undefined &&
+            tableArray[randomRow - 1][randomCol - 1] !== -7 &&
+            tableArray[randomRow - 1][randomCol - 1]++;
+          tableArray[randomRow - 1][randomCol] !== undefined &&
+            tableArray[randomRow - 1][randomCol] !== -7 &&
+            tableArray[randomRow - 1][randomCol]++;
+          tableArray[randomRow - 1][randomCol + 1] !== undefined &&
+            tableArray[randomRow - 1][randomCol + 1] !== -7 &&
+            tableArray[randomRow - 1][randomCol + 1]++;
         }
-        if (tableArray[z]) {
+        if (tableArray[randomRow]) {
           //자신의 줄
-          tableArray[z][x - 1] === -7 && tableArray[z][x]++;
-          tableArray[z][x + 1] === -7 && tableArray[z][x]++;
+          tableArray[randomRow][randomCol - 1] !== undefined &&
+            tableArray[randomRow][randomCol - 1] !== -7 &&
+            tableArray[randomRow][randomCol - 1]++;
+          tableArray[randomRow][randomCol + 1] !== undefined &&
+            tableArray[randomRow][randomCol + 1] !== -7 &&
+            tableArray[randomRow][randomCol + 1]++;
         }
-        if (tableArray[z + 1]) {
+        if (tableArray[randomRow + 1]) {
           // 가로 한 칸 밑 줄
-          tableArray[z + 1][x - 1] === -7 && tableArray[z][x]++;
-          tableArray[z + 1][x] === -7 && tableArray[z][x]++;
-          tableArray[z + 1][x + 1] === -7 && tableArray[z][x]++;
+          tableArray[randomRow + 1][randomCol - 1] !== undefined &&
+            tableArray[randomRow + 1][randomCol - 1] !== -7 &&
+            tableArray[randomRow + 1][randomCol - 1]++;
+          tableArray[randomRow + 1][randomCol] !== undefined &&
+            tableArray[randomRow + 1][randomCol] !== -7 &&
+            tableArray[randomRow + 1][randomCol]++;
+          tableArray[randomRow + 1][randomCol + 1] !== undefined &&
+            tableArray[randomRow + 1][randomCol + 1] !== -7 &&
+            tableArray[randomRow + 1][randomCol + 1]++;
         }
       }
     }
