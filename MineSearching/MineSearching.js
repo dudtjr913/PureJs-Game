@@ -12,11 +12,12 @@
       return alert("마인이 칸 수보다 많습니다.");
     }
 
-    for (let i = 1; i <= row; i++) {
+    for (let i = 0; i < row; i++) {
       // 테이블 만들기
       const tr = document.createElement("tr");
+      tr.classList.add(i);
       table.appendChild(tr);
-      for (let j = 1; j <= column; j++) {
+      for (let j = 0; j < column; j++) {
         const td = document.createElement("td");
         td.classList.add(j);
         td.style.border = "1px solid black";
@@ -26,11 +27,15 @@
       }
     }
 
-    makeOnGame(row, column, mine); // 게임 만들기 - 지뢰 심기, 깃발 표시하기 등
+    const minePosition = makeOnGame(row, column, mine); // 지뢰 심기
 
     mineWrapper.classList.add("mine");
     mineWrapper.appendChild(table);
     document.body.appendChild(mineWrapper);
+    table.style.textAlign = "center";
+
+    table.addEventListener("click", handleOnTableLeftClick(minePosition)); // 마우스 왼쪽 클릭
+    table.oncontextmenu = handleOnTableRightClick; // 마우스 오른쪽 클릭
   };
 
   const makeOnGame = (row, column, mine) => {
@@ -48,11 +53,12 @@
       const randomRow = Math.floor(Math.random() * row);
       const randomCol = Math.floor(Math.random() * column);
       if (tableArray[randomRow][randomCol] === 0) {
-        tableArray[randomRow][randomCol] = 7; // 7 = 마인
+        tableArray[randomRow][randomCol] = -7; // -7 = 마인
         k++;
       }
     }
     console.log(tableArray);
+    return tableArray;
   };
 
   const clearScreen = () => {
@@ -91,6 +97,23 @@
     const button = form.querySelector("button");
 
     button.addEventListener("click", handleOnSubmit(row, col, mine));
+  };
+
+  const handleOnTableLeftClick = (minePosition) => (e) => {
+    const row = e.target.parentNode.className;
+    const column = e.target.className;
+    e.target.innerText = minePosition[row][column];
+  };
+
+  const handleOnTableRightClick = (e) => {
+    e.preventDefault();
+    if (!e.target.style.backgroundColor) {
+      e.target.style.backgroundColor = "red";
+    } else if (e.target.style.backgroundColor === "red") {
+      e.target.style.backgroundColor = "yellow";
+    } else {
+      e.target.style.backgroundColor = null;
+    }
   };
 
   const gameStart = () => {
