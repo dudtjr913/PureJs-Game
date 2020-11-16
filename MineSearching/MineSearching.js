@@ -93,7 +93,6 @@
       }
     }
 
-    console.log(tableArray);
     return tableArray;
   };
 
@@ -178,7 +177,8 @@
     minePosition.forEach((v, i) =>
       v.forEach((mine, j) => {
         if (mine === -7) {
-          table.children[i].children[j].innerText = '지뢰';
+          table.children[i].children[j].style.backgroundImage = 'url(MineSearching/mine.png)';
+          table.children[i].children[j].style.backgroundSize = 'contain';
         }
       })
     );
@@ -234,6 +234,7 @@
     const table = e.target.parentNode.parentNode;
     const mineWrapper = document.body.querySelector('.mine');
     const reStartBtn = mineWrapper.querySelector('.re-start');
+
     if (reStartBtn) {
       return;
     }
@@ -244,7 +245,6 @@
       // 주변에 지뢰가 있는 곳
       if (minePosition[row][column] === -7) {
         // 지뢰 찾으면
-        e.target.innerText = '지뢰';
         gameLose(minePosition, e, table); // 게임패배
         return;
       }
@@ -258,16 +258,20 @@
 
   const handleOnTableRightClick = (e) => {
     e.preventDefault();
-    if (e.target.innerText) {
+    const mineWrapper = document.body.querySelector('.mine');
+    const reStartBtn = mineWrapper.querySelector('.re-start');
+    if (reStartBtn) {
+      return;
+    }
+    if (e.target.innerText && !e.target.style.backgroundImage) {
       // 이미 오픈한 셀은 클릭 불가
       return;
     }
-    if (!e.target.style.backgroundColor) {
-      e.target.style.backgroundColor = 'red';
-    } else if (e.target.style.backgroundColor === 'red') {
-      e.target.style.backgroundColor = 'yellow';
+    if (!e.target.style.backgroundImage) {
+      e.target.style.backgroundImage = 'url(MineSearching/flag.png)';
+      e.target.style.backgroundSize = 'contain';
     } else {
-      e.target.style.backgroundColor = null;
+      e.target.style.backgroundImage = null;
     }
   };
 
