@@ -35,8 +35,8 @@
     table.style.textAlign = 'center';
     table.style.userSelect = 'none';
 
-    table.addEventListener('click', handleOnTableLeftClick(minePosition)); // 마우스 왼쪽 클릭
     table.oncontextmenu = handleOnTableRightClick; // 마우스 오른쪽 클릭
+    return table.addEventListener('click', handleOnTableLeftClick(minePosition)); // 마우스 왼쪽 클릭
   };
 
   const makeOnGame = (row, column, mine) => {
@@ -104,11 +104,14 @@
 
   const handleOnSubmit = (row, col, mine) => (e) => {
     e.preventDefault();
+    const mineWrapper = document.body.querySelector('.mine');
+    const button = mineWrapper.querySelector('button');
     if (!row.value || !col.value || !mine.value) {
       return alert('모든 칸을 입력해주세요.');
     }
     clearScreen();
     makeScreen(row.value, col.value, mine.value);
+    button.removeEventListener('click', handleOnSubmit(row, col, mine));
   };
 
   const handleOnUserInput = () => {
@@ -168,7 +171,33 @@
     }
   };
 
-  const gameLose = () => {};
+  const gameLose = (minePosition, e, table) => {
+    console.log('패배');
+    // 지뢰 모두 찾아서 표시하기
+    e.target.style.backgroundColor = 'red';
+    minePosition.forEach((v, i) =>
+      v.forEach((mine, j) => {
+        if (mine === -7) {
+          table.children[i].children[j].innerText = '지뢰';
+        }
+      })
+    );
+    const mineWrapper = document.body.querySelector('.mine');
+    const button = document.createElement('button');
+    button.innerText = '다시하기';
+    button.classList.add('re-start');
+    mineWrapper.appendChild(button);
+    button.addEventListener(
+      'click',
+      () => {
+        gameFinish();
+        gameStart();
+      },
+      {
+        once: true,
+      }
+    );
+  };
 
   const cellOpen = (table, row, col, minePosition) => {
     const cell = table.children[row].children[col];
@@ -203,6 +232,11 @@
     const row = parseInt(e.target.parentNode.className, 10);
     const column = parseInt(e.target.className, 10);
     const table = e.target.parentNode.parentNode;
+    const mineWrapper = document.body.querySelector('.mine');
+    const reStartBtn = mineWrapper.querySelector('.re-start');
+    if (reStartBtn) {
+      return;
+    }
     if (e.target.innerText) {
       return;
     }
@@ -211,7 +245,7 @@
       if (minePosition[row][column] === -7) {
         // 지뢰 찾으면
         e.target.innerText = '지뢰';
-        gameLose(); // 게임패배
+        gameLose(minePosition, e, table); // 게임패배
         return;
       }
       e.target.innerText = minePosition[row][column];
