@@ -1,40 +1,40 @@
-"use strict";
+'use strict';
 {
   const makeScreen = (row, column, mine) => {
-    const mineWrapper = document.createElement("section");
-    const table = document.createElement("table");
+    const mineWrapper = document.createElement('section');
+    const table = document.createElement('table');
 
-    table.style.borderCollapse = "collapse";
-    table.style.marginTop = "30px";
+    table.style.borderCollapse = 'collapse';
+    table.style.marginTop = '30px';
 
     if (row * column < mine) {
       gameStart();
-      return alert("마인이 칸 수보다 많습니다.");
+      return alert('마인이 칸 수보다 많습니다.');
     }
 
     for (let i = 0; i < row; i++) {
       // 테이블 만들기
-      const tr = document.createElement("tr");
+      const tr = document.createElement('tr');
       tr.classList.add(i);
       table.appendChild(tr);
       for (let j = 0; j < column; j++) {
-        const td = document.createElement("td");
+        const td = document.createElement('td');
         td.classList.add(j);
-        td.style.border = "1px solid black";
-        td.style.width = "60px";
-        td.style.height = "60px";
+        td.style.border = '1px solid black';
+        td.style.width = '60px';
+        td.style.height = '60px';
         tr.appendChild(td);
       }
     }
 
     const minePosition = makeOnGame(row, column, mine); // 지뢰 심기
 
-    mineWrapper.classList.add("mine");
+    mineWrapper.classList.add('mine');
     mineWrapper.appendChild(table);
     document.body.appendChild(mineWrapper);
-    table.style.textAlign = "center";
+    table.style.textAlign = 'center';
 
-    table.addEventListener("click", handleOnTableLeftClick(minePosition)); // 마우스 왼쪽 클릭
+    table.addEventListener('click', handleOnTableLeftClick(minePosition)); // 마우스 왼쪽 클릭
     table.oncontextmenu = handleOnTableRightClick; // 마우스 오른쪽 클릭
   };
 
@@ -97,24 +97,24 @@
   };
 
   const clearScreen = () => {
-    const mineWrapper = document.body.querySelector(".mine");
+    const mineWrapper = document.body.querySelector('.mine');
     document.body.removeChild(mineWrapper);
   };
 
   const handleOnSubmit = (row, col, mine) => (e) => {
     e.preventDefault();
     if (!row.value || !col.value || !mine.value) {
-      return alert("모든 칸을 입력해주세요.");
+      return alert('모든 칸을 입력해주세요.');
     }
     clearScreen();
     makeScreen(row.value, col.value, mine.value);
   };
 
   const handleOnUserInput = () => {
-    const mineWrapper = document.createElement("section");
-    const form = document.createElement("form");
+    const mineWrapper = document.createElement('section');
+    const form = document.createElement('form');
 
-    mineWrapper.classList.add("mine");
+    mineWrapper.classList.add('mine');
 
     form.innerHTML = `
     <input type="number" placeholder = "행 개수" class="row"/>
@@ -126,46 +126,38 @@
     mineWrapper.appendChild(form);
     document.body.appendChild(mineWrapper);
 
-    const row = form.querySelector(".row");
-    const col = form.querySelector(".col");
-    const mine = form.querySelector(".mine");
-    const button = form.querySelector("button");
+    const row = form.querySelector('.row');
+    const col = form.querySelector('.col');
+    const mine = form.querySelector('.mine');
+    const button = form.querySelector('button');
 
-    button.addEventListener("click", handleOnSubmit(row, col, mine));
+    button.addEventListener('click', handleOnSubmit(row, col, mine));
   };
 
   const gameLose = () => {
-    console.log("패배");
+    console.log('패배');
   };
 
   const cellOpen = (table, row, col, minePosition) => {
     const cell = table.children[row].children[col];
-    console.log(row, col);
-    if (minePosition[row][col] === 0) {
-      if (minePosition[row - 1]) {
-        minePosition[row - 1][col - 1] !== undefined &&
-          cellOpen(table, row - 1, col - 1, minePosition);
-
-        minePosition[row - 1][col] !== undefined && cellOpen(table, row - 1, col, minePosition);
-
-        minePosition[row - 1][col + 1] !== undefined &&
-          cellOpen(table, row - 1, col + 1, minePosition);
+    if (minePosition[row][col] === 0 && !cell.style.backgroundColor) {
+      for (let i = 1; i >= -1; i--) {
+        // 주변에 지뢰가 없으면 칸 자동으로 열기
+        cell.style.backgroundColor = 'gray';
+        cell.style.color = 'gray';
+        if (minePosition[row - 1] && minePosition[row - 1][col - i] >= 0) {
+          // 윗 줄이 존재하고, 양 옆 칸이 존재할 때
+          cellOpen(table, row - 1, col - i, minePosition);
+        }
+        if (minePosition[row][col - i] >= 0) {
+          // 양 옆 칸이 존재할 때
+          cellOpen(table, row, col - i, minePosition);
+        }
+        if (minePosition[row + 1] && minePosition[row + 1][col - i] >= 0) {
+          // 아랫 줄이 존재하고, 양 옆 칸이 존재할 때
+          cellOpen(table, row + 1, col - i, minePosition);
+        }
       }
-
-      minePosition[row][col - 1] !== undefined && cellOpen(table, row, col - 1, minePosition);
-      minePosition[row][col + 1] !== undefined && cellOpen(table, row, col + 1, minePosition);
-
-      if (minePosition[row + 1]) {
-        minePosition[row + 1][col - 1] !== undefined &&
-          cellOpen(table, row + 1, col - 1, minePosition);
-
-        minePosition[row + 1][col] !== undefined && cellOpen(table, row + 1, col, minePosition);
-
-        minePosition[row + 1][col + 1] !== undefined &&
-          cellOpen(table, row + 1, col + 1, minePosition);
-      }
-
-      cell.innerText = 0;
     } else if (minePosition[row][col] === -7) {
       return;
     } else {
@@ -182,7 +174,7 @@
       // 주변에 지뢰가 있는 곳
       if (minePosition[row][column] === -7) {
         // 지뢰 찾으면
-        e.target.innerText = "지뢰";
+        e.target.innerText = '지뢰';
         gameLose(); // 게임패배
         return;
       }
@@ -195,10 +187,14 @@
 
   const handleOnTableRightClick = (e) => {
     e.preventDefault();
+    if (e.target.innerText) {
+      // 이미 오픈한 셀은 클릭 불가
+      return;
+    }
     if (!e.target.style.backgroundColor) {
-      e.target.style.backgroundColor = "red";
-    } else if (e.target.style.backgroundColor === "red") {
-      e.target.style.backgroundColor = "yellow";
+      e.target.style.backgroundColor = 'red';
+    } else if (e.target.style.backgroundColor === 'red') {
+      e.target.style.backgroundColor = 'yellow';
     } else {
       e.target.style.backgroundColor = null;
     }
@@ -215,22 +211,22 @@
   };
 
   const gameStartButton = () => {
-    let button = document.querySelector(".mineBtn");
+    let button = document.querySelector('.mineBtn');
     if (!button) {
-      button = document.createElement("button");
-      button.classList.add("mineBtn");
+      button = document.createElement('button');
+      button.classList.add('mineBtn');
       document.body.appendChild(button);
     }
-    button.innerText = "지뢰찾기 시작";
-    button.removeEventListener("click", gameFinish);
-    button.addEventListener("click", gameStart);
+    button.innerText = '지뢰찾기 시작';
+    button.removeEventListener('click', gameFinish);
+    button.addEventListener('click', gameStart);
   };
 
   const gameFinishButton = () => {
-    const button = document.querySelector(".mineBtn");
-    button.innerText = "지뢰찾기 종료";
-    button.removeEventListener("click", gameStart);
-    button.addEventListener("click", gameFinish);
+    const button = document.querySelector('.mineBtn');
+    button.innerText = '지뢰찾기 종료';
+    button.removeEventListener('click', gameStart);
+    button.addEventListener('click', gameFinish);
   };
 
   gameStartButton();
