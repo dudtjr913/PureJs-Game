@@ -33,9 +33,10 @@
     mineWrapper.appendChild(table);
     document.body.appendChild(mineWrapper);
     table.style.textAlign = "center";
+    table.style.userSelect = "none";
 
-    table.addEventListener("click", handleOnTableLeftClick(minePosition)); // 마우스 왼쪽 클릭
     table.oncontextmenu = handleOnTableRightClick; // 마우스 오른쪽 클릭
+    return table.addEventListener("click", handleOnTableLeftClick(minePosition)); // 마우스 왼쪽 클릭
   };
 
   const makeOnGame = (row, column, mine) => {
@@ -92,7 +93,6 @@
       }
     }
 
-    console.log(tableArray);
     return tableArray;
   };
 
@@ -103,11 +103,14 @@
 
   const handleOnSubmit = (row, col, mine) => (e) => {
     e.preventDefault();
+    const mineWrapper = document.body.querySelector(".mine");
+    const button = mineWrapper.querySelector("button");
     if (!row.value || !col.value || !mine.value) {
       return alert("모든 칸을 입력해주세요.");
     }
     clearScreen();
     makeScreen(row.value, col.value, mine.value);
+    button.removeEventListener("click", handleOnSubmit(row, col, mine));
   };
 
   const handleOnUserInput = () => {
@@ -134,38 +137,93 @@
     button.addEventListener("click", handleOnSubmit(row, col, mine));
   };
 
-  const gameLose = () => {
+  const cellColor = (cell) => {
+    cell.style.backgroundColor = "lightgray";
+    switch (cell.innerText) {
+      case "0":
+        cell.style.color = "lightgray";
+        break;
+      case "1":
+        cell.style.color = "blue";
+        break;
+      case "2":
+        cell.style.color = "green";
+        break;
+      case "3":
+        cell.style.color = "red";
+        break;
+      case "4":
+        cell.style.color = "yellow";
+        break;
+      case "5":
+        cell.style.color = "orange";
+        break;
+      case "6":
+        cell.style.color = "purple";
+        break;
+      case "7":
+        cell.style.color = "white";
+        break;
+      default:
+        cell.style.color = "black";
+        break;
+    }
+  };
+
+  const gameLose = (minePosition, e, table) => {
     console.log("패배");
+    // 지뢰 모두 찾아서 표시하기
+    e.target.style.backgroundColor = "red";
+    minePosition.forEach((v, i) =>
+      v.forEach((mine, j) => {
+        if (mine === -7) {
+          table.children[i].children[j].style.backgroundImage = "url(MineSearching/mine.png)";
+          table.children[i].children[j].style.backgroundSize = "contain";
+        }
+      })
+    );
+    const mineWrapper = document.body.querySelector(".mine");
+    const button = document.createElement("button");
+    button.innerText = "다시하기";
+    button.classList.add("re-start");
+    mineWrapper.appendChild(button);
+    button.addEventListener(
+      "click",
+      () => {
+        gameFinish();
+        gameStart();
+      },
+      {
+        once: true,
+      }
+    );
   };
 
   const cellOpen = (table, row, col, minePosition) => {
     const cell = table.children[row].children[col];
-    console.log(row, col);
-    if (minePosition[row][col] === 0 && cell.innerText !== 0) {
-      if (minePosition[row - 1]) {
-        minePosition[row - 1][col - 1] === 0 && cellOpen(table, row - 1, col - 1, minePosition);
-
-        minePosition[row - 1][col] === 0 && cellOpen(table, row - 1, col, minePosition);
-
-        minePosition[row - 1][col + 1] === 0 && cellOpen(table, row - 1, col + 1, minePosition);
+    if (minePosition[row][col] === 0 && !cell.style.backgroundColor) {
+      for (let i = 1; i >= -1; i--) {
+        // 주변에 지뢰가 없으면 칸 자동으로 열기
+        cell.style.backgroundColor = "lightgray";
+        cell.style.color = "lightgray";
+        if (minePosition[row - 1] && minePosition[row - 1][col - i] >= 0) {
+          // 윗 줄이 존재하고, 양 옆 칸이 존재할 때
+          cellOpen(table, row - 1, col - i, minePosition);
+        }
+        if (minePosition[row][col - i] >= 0) {
+          // 양 옆 칸이 존재할 때
+          cellOpen(table, row, col - i, minePosition);
+        }
+        if (minePosition[row + 1] && minePosition[row + 1][col - i] >= 0) {
+          // 아랫 줄이 존재하고, 양 옆 칸이 존재할 때
+          cellOpen(table, row + 1, col - i, minePosition);
+        }
       }
-
-      minePosition[row][col - 1] === 0 && cellOpen(table, row, col - 1, minePosition);
-      minePosition[row][col + 1] === 0 && cellOpen(table, row, col + 1, minePosition);
-
-      if (minePosition[row + 1]) {
-        minePosition[row + 1][col - 1] === 0 && cellOpen(table, row + 1, col - 1, minePosition);
-
-        minePosition[row + 1][col] === 0 && cellOpen(table, row + 1, col, minePosition);
-
-        minePosition[row + 1][col + 1] === 0 && cellOpen(table, row + 1, col + 1, minePosition);
-      }
-
-      cell.innerText = 0;
     } else if (minePosition[row][col] === -7) {
       return;
     } else {
       cell.innerText = minePosition[row][col];
+      cellColor(cell);
       return;
     }
   };
@@ -174,15 +232,24 @@
     const row = parseInt(e.target.parentNode.className, 10);
     const column = parseInt(e.target.className, 10);
     const table = e.target.parentNode.parentNode;
+    const mineWrapper = document.body.querySelector(".mine");
+    const reStartBtn = mineWrapper.querySelector(".re-start");
+
+    if (reStartBtn) {
+      return;
+    }
+    if (e.target.innerText) {
+      return;
+    }
     if (minePosition[row][column] !== 0) {
       // 주변에 지뢰가 있는 곳
       if (minePosition[row][column] === -7) {
         // 지뢰 찾으면
-        e.target.innerText = "지뢰";
-        gameLose(); // 게임패배
+        gameLose(minePosition, e, table); // 게임패배
         return;
       }
       e.target.innerText = minePosition[row][column];
+      cellColor(e.target);
       return;
     }
 
@@ -191,12 +258,20 @@
 
   const handleOnTableRightClick = (e) => {
     e.preventDefault();
-    if (!e.target.style.backgroundColor) {
-      e.target.style.backgroundColor = "red";
-    } else if (e.target.style.backgroundColor === "red") {
-      e.target.style.backgroundColor = "yellow";
+    const mineWrapper = document.body.querySelector(".mine");
+    const reStartBtn = mineWrapper.querySelector(".re-start");
+    if (reStartBtn) {
+      return;
+    }
+    if (e.target.innerText && !e.target.style.backgroundImage) {
+      // 이미 오픈한 셀은 클릭 불가
+      return;
+    }
+    if (!e.target.style.backgroundImage) {
+      e.target.style.backgroundImage = "url(MineSearching/flag.png)";
+      e.target.style.backgroundSize = "contain";
     } else {
-      e.target.style.backgroundColor = null;
+      e.target.style.backgroundImage = null;
     }
   };
 
