@@ -141,28 +141,24 @@
   const cellOpen = (table, row, col, minePosition) => {
     const cell = table.children[row].children[col];
     console.log(row, col);
-    if (minePosition[row][col] === 0) {
+    if (minePosition[row][col] === 0 && cell.innerText !== 0) {
       if (minePosition[row - 1]) {
-        minePosition[row - 1][col - 1] !== undefined &&
-          cellOpen(table, row - 1, col - 1, minePosition);
+        minePosition[row - 1][col - 1] === 0 && cellOpen(table, row - 1, col - 1, minePosition);
 
-        minePosition[row - 1][col] !== undefined && cellOpen(table, row - 1, col, minePosition);
+        minePosition[row - 1][col] === 0 && cellOpen(table, row - 1, col, minePosition);
 
-        minePosition[row - 1][col + 1] !== undefined &&
-          cellOpen(table, row - 1, col + 1, minePosition);
+        minePosition[row - 1][col + 1] === 0 && cellOpen(table, row - 1, col + 1, minePosition);
       }
 
-      minePosition[row][col - 1] !== undefined && cellOpen(table, row, col - 1, minePosition);
-      minePosition[row][col + 1] !== undefined && cellOpen(table, row, col + 1, minePosition);
+      minePosition[row][col - 1] === 0 && cellOpen(table, row, col - 1, minePosition);
+      minePosition[row][col + 1] === 0 && cellOpen(table, row, col + 1, minePosition);
 
       if (minePosition[row + 1]) {
-        minePosition[row + 1][col - 1] !== undefined &&
-          cellOpen(table, row + 1, col - 1, minePosition);
+        minePosition[row + 1][col - 1] === 0 && cellOpen(table, row + 1, col - 1, minePosition);
 
-        minePosition[row + 1][col] !== undefined && cellOpen(table, row + 1, col, minePosition);
+        minePosition[row + 1][col] === 0 && cellOpen(table, row + 1, col, minePosition);
 
-        minePosition[row + 1][col + 1] !== undefined &&
-          cellOpen(table, row + 1, col + 1, minePosition);
+        minePosition[row + 1][col + 1] === 0 && cellOpen(table, row + 1, col + 1, minePosition);
       }
 
       cell.innerText = 0;
