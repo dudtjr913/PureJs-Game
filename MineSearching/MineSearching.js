@@ -1,50 +1,42 @@
-'use strict';
+"use strict";
 {
   const makeScreen = (row, column, mine) => {
-    const mineWrapper = document.createElement('section');
-    const table = document.createElement('table');
+    const mineWrapper = document.createElement("section");
+    const table = document.createElement("table");
 
-    table.style.borderCollapse = 'collapse';
-    table.style.marginTop = '30px';
+    table.style.borderCollapse = "collapse";
+    table.style.marginTop = "30px";
 
     if (row * column < mine) {
       gameStart();
-      return alert('마인이 칸 수보다 많습니다.');
+      return alert("마인이 칸 수보다 많습니다.");
     }
 
     for (let i = 0; i < row; i++) {
       // 테이블 만들기
-      const tr = document.createElement('tr');
+      const tr = document.createElement("tr");
       tr.classList.add(i);
       table.appendChild(tr);
       for (let j = 0; j < column; j++) {
-        const td = document.createElement('td');
+        const td = document.createElement("td");
         td.classList.add(j);
-        td.style.border = '1px solid black';
-        td.style.width = '60px';
-        td.style.height = '60px';
+        td.style.border = "1px solid black";
+        td.style.width = "60px";
+        td.style.height = "60px";
         tr.appendChild(td);
       }
     }
 
     const minePosition = makeOnGame(row, column, mine); // 지뢰 심기
 
-    mineWrapper.classList.add('mine');
+    mineWrapper.classList.add("mine");
     mineWrapper.appendChild(table);
     document.body.appendChild(mineWrapper);
-<<<<<<< HEAD
     table.style.textAlign = "center";
     table.style.userSelect = "none";
 
     table.oncontextmenu = handleOnTableRightClick; // 마우스 오른쪽 클릭
     return table.addEventListener("click", handleOnTableLeftClick(minePosition)); // 마우스 왼쪽 클릭
-=======
-    table.style.textAlign = 'center';
-    table.style.userSelect = 'none';
-
-    table.oncontextmenu = handleOnTableRightClick; // 마우스 오른쪽 클릭
-    return table.addEventListener('click', handleOnTableLeftClick(minePosition)); // 마우스 왼쪽 클릭
->>>>>>> 61d4f49d560cf4fe8ed88632a44699e640d36131
   };
 
   const makeOnGame = (row, column, mine) => {
@@ -105,36 +97,27 @@
   };
 
   const clearScreen = () => {
-    const mineWrapper = document.body.querySelector('.mine');
+    const mineWrapper = document.body.querySelector(".mine");
     document.body.removeChild(mineWrapper);
   };
 
   const handleOnSubmit = (row, col, mine) => (e) => {
     e.preventDefault();
-<<<<<<< HEAD
     const mineWrapper = document.body.querySelector(".mine");
     const button = mineWrapper.querySelector("button");
-=======
-    const mineWrapper = document.body.querySelector('.mine');
-    const button = mineWrapper.querySelector('button');
->>>>>>> 61d4f49d560cf4fe8ed88632a44699e640d36131
     if (!row.value || !col.value || !mine.value) {
-      return alert('모든 칸을 입력해주세요.');
+      return alert("모든 칸을 입력해주세요.");
     }
     clearScreen();
     makeScreen(row.value, col.value, mine.value);
-<<<<<<< HEAD
     button.removeEventListener("click", handleOnSubmit(row, col, mine));
-=======
-    button.removeEventListener('click', handleOnSubmit(row, col, mine));
->>>>>>> 61d4f49d560cf4fe8ed88632a44699e640d36131
   };
 
   const handleOnUserInput = () => {
-    const mineWrapper = document.createElement('section');
-    const form = document.createElement('form');
+    const mineWrapper = document.createElement("section");
+    const form = document.createElement("form");
 
-    mineWrapper.classList.add('mine');
+    mineWrapper.classList.add("mine");
 
     form.innerHTML = `
     <input type="number" placeholder = "행 개수" class="row"/>
@@ -146,16 +129,15 @@
     mineWrapper.appendChild(form);
     document.body.appendChild(mineWrapper);
 
-    const row = form.querySelector('.row');
-    const col = form.querySelector('.col');
-    const mine = form.querySelector('.mine');
-    const button = form.querySelector('button');
+    const row = form.querySelector(".row");
+    const col = form.querySelector(".col");
+    const mine = form.querySelector(".mine");
+    const button = form.querySelector("button");
 
-    button.addEventListener('click', handleOnSubmit(row, col, mine));
+    button.addEventListener("click", handleOnSubmit(row, col, mine));
   };
 
   const cellColor = (cell) => {
-<<<<<<< HEAD
     cell.style.backgroundColor = "lightgray";
     switch (cell.innerText) {
       case "0":
@@ -217,81 +199,13 @@
     );
   };
 
-=======
-    cell.style.backgroundColor = 'lightgray';
-    switch (cell.innerText) {
-      case '0':
-        cell.style.color = 'lightgray';
-        break;
-      case '1':
-        cell.style.color = 'blue';
-        break;
-      case '2':
-        cell.style.color = 'green';
-        break;
-      case '3':
-        cell.style.color = 'red';
-        break;
-      case '4':
-        cell.style.color = 'yellow';
-        break;
-      case '5':
-        cell.style.color = 'orange';
-        break;
-      case '6':
-        cell.style.color = 'purple';
-        break;
-      case '7':
-        cell.style.color = 'white';
-        break;
-      default:
-        cell.style.color = 'black';
-        break;
-    }
-  };
-
-  const gameLose = (minePosition, e, table) => {
-    console.log('패배');
-    // 지뢰 모두 찾아서 표시하기
-    e.target.style.backgroundColor = 'red';
-    minePosition.forEach((v, i) =>
-      v.forEach((mine, j) => {
-        if (mine === -7) {
-          table.children[i].children[j].style.backgroundImage = 'url(MineSearching/mine.png)';
-          table.children[i].children[j].style.backgroundSize = 'contain';
-        }
-      })
-    );
-    const mineWrapper = document.body.querySelector('.mine');
-    const button = document.createElement('button');
-    button.innerText = '다시하기';
-    button.classList.add('re-start');
-    mineWrapper.appendChild(button);
-    button.addEventListener(
-      'click',
-      () => {
-        gameFinish();
-        gameStart();
-      },
-      {
-        once: true,
-      }
-    );
-  };
-
->>>>>>> 61d4f49d560cf4fe8ed88632a44699e640d36131
   const cellOpen = (table, row, col, minePosition) => {
     const cell = table.children[row].children[col];
     if (minePosition[row][col] === 0 && !cell.style.backgroundColor) {
       for (let i = 1; i >= -1; i--) {
         // 주변에 지뢰가 없으면 칸 자동으로 열기
-<<<<<<< HEAD
         cell.style.backgroundColor = "lightgray";
         cell.style.color = "lightgray";
-=======
-        cell.style.backgroundColor = 'lightgray';
-        cell.style.color = 'lightgray';
->>>>>>> 61d4f49d560cf4fe8ed88632a44699e640d36131
         if (minePosition[row - 1] && minePosition[row - 1][col - i] >= 0) {
           // 윗 줄이 존재하고, 양 옆 칸이 존재할 때
           cellOpen(table, row - 1, col - i, minePosition);
@@ -318,13 +232,8 @@
     const row = parseInt(e.target.parentNode.className, 10);
     const column = parseInt(e.target.className, 10);
     const table = e.target.parentNode.parentNode;
-<<<<<<< HEAD
     const mineWrapper = document.body.querySelector(".mine");
     const reStartBtn = mineWrapper.querySelector(".re-start");
-=======
-    const mineWrapper = document.body.querySelector('.mine');
-    const reStartBtn = mineWrapper.querySelector('.re-start');
->>>>>>> 61d4f49d560cf4fe8ed88632a44699e640d36131
 
     if (reStartBtn) {
       return;
@@ -349,13 +258,8 @@
 
   const handleOnTableRightClick = (e) => {
     e.preventDefault();
-<<<<<<< HEAD
     const mineWrapper = document.body.querySelector(".mine");
     const reStartBtn = mineWrapper.querySelector(".re-start");
-=======
-    const mineWrapper = document.body.querySelector('.mine');
-    const reStartBtn = mineWrapper.querySelector('.re-start');
->>>>>>> 61d4f49d560cf4fe8ed88632a44699e640d36131
     if (reStartBtn) {
       return;
     }
@@ -364,13 +268,8 @@
       return;
     }
     if (!e.target.style.backgroundImage) {
-<<<<<<< HEAD
       e.target.style.backgroundImage = "url(MineSearching/flag.png)";
       e.target.style.backgroundSize = "contain";
-=======
-      e.target.style.backgroundImage = 'url(MineSearching/flag.png)';
-      e.target.style.backgroundSize = 'contain';
->>>>>>> 61d4f49d560cf4fe8ed88632a44699e640d36131
     } else {
       e.target.style.backgroundImage = null;
     }
@@ -387,22 +286,22 @@
   };
 
   const gameStartButton = () => {
-    let button = document.querySelector('.mineBtn');
+    let button = document.querySelector(".mineBtn");
     if (!button) {
-      button = document.createElement('button');
-      button.classList.add('mineBtn');
+      button = document.createElement("button");
+      button.classList.add("mineBtn");
       document.body.appendChild(button);
     }
-    button.innerText = '지뢰찾기 시작';
-    button.removeEventListener('click', gameFinish);
-    button.addEventListener('click', gameStart);
+    button.innerText = "지뢰찾기 시작";
+    button.removeEventListener("click", gameFinish);
+    button.addEventListener("click", gameStart);
   };
 
   const gameFinishButton = () => {
-    const button = document.querySelector('.mineBtn');
-    button.innerText = '지뢰찾기 종료';
-    button.removeEventListener('click', gameStart);
-    button.addEventListener('click', gameFinish);
+    const button = document.querySelector(".mineBtn");
+    button.innerText = "지뢰찾기 종료";
+    button.removeEventListener("click", gameStart);
+    button.addEventListener("click", gameFinish);
   };
 
   gameStartButton();
