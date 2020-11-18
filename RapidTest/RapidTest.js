@@ -5,14 +5,15 @@
 
     const rapidWrapper = document.createElement("section");
     const rapidDiv = document.createElement("div");
-    const resultSpan = document.createElement("span");
+    const resultDiv = document.createElement("div");
+    resultDiv.classList.add("result");
 
     rapidWrapper.classList.add("rapid");
     rapidDiv.innerText = "클릭하면 시작!";
     rapidDiv.classList.add("wait");
 
     rapidWrapper.appendChild(rapidDiv);
-    rapidWrapper.appendChild(resultSpan);
+    rapidWrapper.appendChild(resultDiv);
     document.body.appendChild(rapidWrapper);
 
     gameStart(rapidDiv);
@@ -25,13 +26,18 @@
     gameStartButton();
   };
 
-  const reStart = (hurry) => {
+  const reStart = (hurry, re) => {
     const rapidWrapper = document.querySelector(".rapid");
     const rapidDiv = rapidWrapper.querySelector("div");
+    const resultDiv = rapidWrapper.querySelector(".result");
+
+    if (re) {
+      resultDiv.innerText = "";
+    }
+
     if (hurry) {
       clearTimeout(hurry);
-      const resultSpan = rapidWrapper.querySelector("span");
-      resultSpan.innerText = "너무 성급했습니다. 화면이 완전히 바뀌면 클릭하세요!";
+      resultDiv.innerText = "너무 성급했습니다. 화면이 완전히 바뀌면 클릭하세요!";
     }
 
     if (rapidDiv.className === "going") {
@@ -60,7 +66,6 @@
       } else if (rapidDiv.className === "going") {
         gameFinish(startTime, average);
         startTime = null;
-        console.log(average);
       }
     });
   };
@@ -69,15 +74,27 @@
     const finishTime = new Date().getTime();
 
     const rapidWrapper = document.querySelector(".rapid");
-    const resultSpan = rapidWrapper.querySelector("span");
+    const resultDiv = rapidWrapper.querySelector(".result");
+    let reStartBtn = document.querySelector(".restart-btn");
 
     const rapidTime = (finishTime - startTime) / 1000;
     average.push(rapidTime);
     const averageTime = average.reduce((pre, cur) => pre + cur) / average.length;
 
-    resultSpan.innerText = `현재${rapidTime.toFixed(3)}초 / 평균${averageTime.toFixed(3)}초 / 총${
+    resultDiv.innerText = `현재${rapidTime.toFixed(3)}초 / 평균${averageTime.toFixed(3)}초 / 총${
       average.length
     }번 시도`;
+
+    if (!reStartBtn) {
+      reStartBtn = document.createElement("button");
+      reStartBtn.innerText = "다시하기";
+      reStartBtn.classList.add("restart-btn");
+      rapidWrapper.appendChild(reStartBtn);
+      reStartBtn.addEventListener("click", () => {
+        average.splice(0);
+        reStart(null, "re");
+      });
+    }
 
     reStart();
   };
